@@ -29,7 +29,6 @@ public class PlayState extends State {
     private Texture ground;
 
     private Array<Vector2> groundPositions;
-    private Vector2 groundPos1, groundPos2;
 
     private float zoom;
     private int score;
