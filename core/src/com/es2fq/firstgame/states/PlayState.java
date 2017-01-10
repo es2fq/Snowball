@@ -18,6 +18,7 @@ import com.es2fq.firstgame.sprites.*;
 
 public class PlayState extends State {
     private static final int GROUND_OFFSET = -30;
+    private static final int NUM_GROUND = 4;
     private static final int NUM_OBSTACLES = 4;
     private static final int OBSTACLE_GAP = 200;
 
@@ -27,6 +28,7 @@ public class PlayState extends State {
     private Texture bg;
     private Texture ground;
 
+    private Array<Vector2> groundPositions;
     private Vector2 groundPos1, groundPos2;
 
     private float zoom;
@@ -48,8 +50,10 @@ public class PlayState extends State {
         bg = new Texture("bg.png");
         ground = new Texture("ground.png");
 
-        groundPos1 = new Vector2(cam.position.x - cam.viewportWidth / 2, GROUND_OFFSET);
-        groundPos2 = new Vector2((cam.position.x - cam.viewportWidth / 2) + ground.getWidth(), GROUND_OFFSET);
+        groundPositions = new Array<Vector2>();
+        for (int i = 0; i < NUM_GROUND; i++) {
+            groundPositions.add(new Vector2((cam.position.x - cam.viewportWidth / 2) + ground.getWidth() * i, GROUND_OFFSET));
+        }
 
         int groundHeight = GROUND_OFFSET + ground.getHeight();
 
@@ -79,8 +83,7 @@ public class PlayState extends State {
             if (o.collides(snowball.getBounds())) {
                 if (snowball.getSnowCount() > o.getSize()) {
                     o.destroy();
-                }
-                else {
+                } else {
                     gsm.set(new PlayState(gsm));
                     return;
                 }
@@ -110,8 +113,9 @@ public class PlayState extends State {
         sb.draw(bg, cam.position.x - (cam.viewportWidth / 2), 0);
         sb.draw(snowball.getTexture(), snowball.getPosition().x, snowball.getPosition().y, snowball.getSizeX(), snowball.getSizeY());
 
-        sb.draw(ground, groundPos1.x, groundPos1.y);
-        sb.draw(ground, groundPos2.x, groundPos2.y);
+        for (Vector2 coord : groundPositions) {
+            sb.draw(ground, coord.x, coord.y);
+        }
 
         for (Obstacle o : obstacles) {
             sb.draw(o.getTexture(), o.getPosition().x, o.getPosition().y);
@@ -144,11 +148,12 @@ public class PlayState extends State {
     }
 
     private void updateGround() {
-        if (cam.position.x - (cam.viewportWidth / 2) > groundPos1.x + ground.getWidth()) {
-            groundPos1.add(ground.getWidth() * 2, 0);
-        }
-        if (cam.position.x - (cam.viewportWidth / 2) > groundPos2.x + ground.getWidth()) {
-            groundPos2.add(ground.getWidth() * 2, 0);
+        for (int i = 0; i < groundPositions.size; i++) {
+            Vector2 coord = groundPositions.get(i);
+            if (cam.position.x - (cam.viewportWidth / 2) > coord.x + ground.getWidth()) {
+                coord.add(ground.getWidth() * NUM_GROUND, 0);
+            }
+            groundPositions.set(i, coord);
         }
     }
 }
