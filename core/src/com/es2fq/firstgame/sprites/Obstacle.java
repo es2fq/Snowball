@@ -41,7 +41,7 @@ public class Obstacle {
     public void reposition(float x, int snowCount) {
         if (snowCount > 1) {
             texture = new Texture("building.png");
-            textureAnimation = new Animation(new TextureRegion(texture), 8, 1f);
+            textureAnimation = new Animation(new TextureRegion(texture), 1, 1f);
             bounds.setWidth(texture.getWidth());
             bounds.setHeight(texture.getHeight());
         }
@@ -52,7 +52,7 @@ public class Obstacle {
 
     public void destroy() {
         texture = new Texture("fencedestroy.png");
-        textureAnimation = new Animation(new TextureRegion(texture), 8, 0.1f);
+        textureAnimation = new Animation(new TextureRegion(texture), 4, 0.1f);
         textureAnimation.setMaxCycles(1);
     }
 
