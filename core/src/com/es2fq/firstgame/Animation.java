@@ -14,6 +14,9 @@ public class Animation {
     private int frameCount;
     private int frame;
 
+    private int numCycles;
+    private int maxCycles;
+
     public Animation(TextureRegion region, int frameCount, float cycleTime) {
         frames = new Array<TextureRegion>();
         int frameWidth = region.getRegionWidth() / frameCount;
@@ -26,6 +29,8 @@ public class Animation {
         this.frameCount = frameCount;
         this.maxFrameTime = cycleTime / frameCount;
         this.frame = 0;
+        this.numCycles = 0;
+        this.maxCycles = -1;
     }
 
     public void update(float dt) {
@@ -35,11 +40,20 @@ public class Animation {
             currentFrameTime = 0;
         }
         if (frame >= frameCount) {
+            numCycles++;
+            if (maxCycles != -1 && numCycles >= maxCycles) {
+                frame -= 1;
+                return;
+            }
             frame = 0;
         }
     }
 
     public TextureRegion getFrame() {
         return frames.get(frame);
+    }
+
+    public void setMaxCycles(int num) {
+        maxCycles = num;
     }
 }

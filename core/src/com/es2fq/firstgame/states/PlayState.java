@@ -75,24 +75,23 @@ public class PlayState extends State {
         snowball.update(dt);
 
         for (Obstacle o : obstacles) {
+            o.update(dt);
             if (o.collides(snowball.getBounds())) {
-                if (score > o.getSize()) {
+                if (snowball.getSnowCount() > o.getSize()) {
                     o.destroy();
-                    break;
                 }
-                gsm.set(new PlayState(gsm));
-                return;
+                else {
+                    gsm.set(new PlayState(gsm));
+                    return;
+                }
             }
-            if (snowball.getPosition().x > o.getPosition().x + o.getTexture().getWidth() && !o.isPassed()) {
+            if (snowball.getPosition().x > o.getPosition().x + o.getTexture().getRegionWidth() && !o.isPassed()) {
                 score++;
-
-                if (score % NUM_OBSTACLES == 0) {
-                }
 
                 o.setPassed(true);
             }
-            if (cam.position.x - (cam.viewportWidth / 2) > o.getPosition().x + o.getTexture().getWidth()) {
-                o.reposition(o.getPosition().x + (NUM_OBSTACLES * OBSTACLE_GAP), score);
+            if (cam.position.x - (cam.viewportWidth / 2) > o.getPosition().x + o.getTexture().getRegionWidth()) {
+                o.reposition(o.getPosition().x + (NUM_OBSTACLES * OBSTACLE_GAP), snowball.getSnowCount());
                 o.setPassed(false);
             }
         }

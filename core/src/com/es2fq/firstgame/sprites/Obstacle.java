@@ -1,8 +1,10 @@
 package com.es2fq.firstgame.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.es2fq.firstgame.*;
 
 /**
  * Created by es2fq on 1/4/2017.
@@ -12,6 +14,7 @@ public class Obstacle {
     private Vector3 position;
 
     private Texture texture;
+    private Animation textureAnimation;
 
     private Rectangle bounds;
 
@@ -20,6 +23,7 @@ public class Obstacle {
 
     public Obstacle(float x, float y) {
         texture = new Texture("fence.png");
+        textureAnimation = new Animation(new TextureRegion(texture), 1, 1f);
 
         position = new Vector3(x, y, 0);
         bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
@@ -28,13 +32,16 @@ public class Obstacle {
         size = 2;
     }
 
-    public boolean collides(Rectangle player) {
-        return player.overlaps(bounds);
+    public void update(float dt) {
+        if (textureAnimation != null) {
+            textureAnimation.update(dt);
+        }
     }
 
-    public void reposition(float x, int score) {
-        if (score > 1) {
+    public void reposition(float x, int snowCount) {
+        if (snowCount > 1) {
             texture = new Texture("building.png");
+            textureAnimation = new Animation(new TextureRegion(texture), 8, 1f);
             bounds.setWidth(texture.getWidth());
             bounds.setHeight(texture.getHeight());
         }
@@ -44,11 +51,17 @@ public class Obstacle {
     }
 
     public void destroy() {
-
+        texture = new Texture("fencedestroy.png");
+        textureAnimation = new Animation(new TextureRegion(texture), 8, 0.1f);
+        textureAnimation.setMaxCycles(1);
     }
 
-    public Texture getTexture() {
-        return texture;
+    public boolean collides(Rectangle player) {
+        return player.overlaps(bounds);
+    }
+
+    public TextureRegion getTexture() {
+        return textureAnimation.getFrame();
     }
 
     public boolean isPassed() {
