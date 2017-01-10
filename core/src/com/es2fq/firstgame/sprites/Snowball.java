@@ -12,7 +12,7 @@ import com.es2fq.firstgame.*;
 
 public class Snowball {
     private static final int GRAVITY = -15;
-    private static final float MOVEMENT = 150;
+    private static final float MOVEMENT = 100;
     private static final float JUMP = 350;
 
     private Vector3 position;
@@ -29,6 +29,7 @@ public class Snowball {
     private float sizeX;
     private float sizeY;
     private float extraSpeed;
+    private float scale;
 
     public Snowball(int x, int y) {
         position = new Vector3(x, y, 0);
@@ -43,8 +44,10 @@ public class Snowball {
         texture = new Texture("rolling.png");
         textureAnimation = new Animation(new TextureRegion(texture), numFrames, 0.5f);
 
-        sizeX = texture.getWidth() / numFrames;
-        sizeY = texture.getHeight();
+        sizeX = texture.getWidth() / numFrames / 2;
+        sizeY = texture.getHeight() / 2;
+
+        scale = 0.05f;
 
         bounds = new Rectangle(x, y, sizeX, sizeY);
     }
@@ -68,10 +71,10 @@ public class Snowball {
 
         bounds.set(position.x, position.y, sizeX, sizeY);
 
-        sizeX += 0.1;
-        sizeY += 0.1;
+        sizeX += scale;
+        sizeY += scale;
 
-        extraSpeed += 0.5;
+        extraSpeed += 0.2;
     }
 
     public void jump() {

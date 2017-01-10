@@ -19,6 +19,7 @@ public class Obstacle {
     private Rectangle bounds;
 
     private boolean passed;
+    private boolean destroyed;
     private int size;
 
     public Obstacle(float x, float y) {
@@ -29,6 +30,7 @@ public class Obstacle {
         bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
 
         passed = false;
+        destroyed = false;
         size = 2;
     }
 
@@ -44,6 +46,9 @@ public class Obstacle {
             textureAnimation = new Animation(new TextureRegion(texture), 1, 1f);
             bounds.setWidth(texture.getWidth());
             bounds.setHeight(texture.getHeight());
+
+            destroyed = false;
+            size = 4;
         }
 
         position.set(x, position.y, 0);
@@ -51,8 +56,19 @@ public class Obstacle {
     }
 
     public void destroy() {
-        texture = new Texture("fencedestroy.png");
-        textureAnimation = new Animation(new TextureRegion(texture), 4, 0.1f);
+        if (destroyed)
+            return;
+
+        destroyed = true;
+
+        if (size == 2) {
+            texture = new Texture("fencedestroy.png");
+            textureAnimation = new Animation(new TextureRegion(texture), 4, 0.1f);
+        }
+        if (size == 4) {
+            texture = new Texture("buildingdestroy.png");
+            textureAnimation = new Animation(new TextureRegion(texture), 4, 0.1f);
+        }
         textureAnimation.setMaxCycles(1);
     }
 

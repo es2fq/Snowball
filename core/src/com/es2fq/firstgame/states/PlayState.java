@@ -18,7 +18,7 @@ import com.es2fq.firstgame.sprites.*;
 
 public class PlayState extends State {
     private static final int GROUND_OFFSET = -30;
-    private static final int NUM_OBSTACLES = 5;
+    private static final int NUM_OBSTACLES = 4;
     private static final int OBSTACLE_GAP = 200;
 
     private Snowball snowball;
@@ -87,7 +87,6 @@ public class PlayState extends State {
             }
             if (snowball.getPosition().x > o.getPosition().x + o.getTexture().getRegionWidth() && !o.isPassed()) {
                 score++;
-
                 o.setPassed(true);
             }
             if (cam.position.x - (cam.viewportWidth / 2) > o.getPosition().x + o.getTexture().getRegionWidth()) {
@@ -97,7 +96,7 @@ public class PlayState extends State {
         }
 
         cam.setToOrtho(false, GameClass.WIDTH / 2 * zoom, GameClass.HEIGHT / 2 * zoom);
-        cam.position.x = snowball.getPosition().x + cam.viewportWidth * 0.3f;
+        cam.position.x = snowball.getPosition().x + cam.viewportWidth * 0.4f;
 
         zoom += 0.001f;
 
@@ -111,19 +110,25 @@ public class PlayState extends State {
         sb.draw(bg, cam.position.x - (cam.viewportWidth / 2), 0);
         sb.draw(snowball.getTexture(), snowball.getPosition().x, snowball.getPosition().y, snowball.getSizeX(), snowball.getSizeY());
 
-        for (Obstacle o : obstacles) {
-            sb.draw(o.getTexture(), o.getPosition().x, o.getPosition().y);
-        }
-
         sb.draw(ground, groundPos1.x, groundPos1.y);
         sb.draw(ground, groundPos2.x, groundPos2.y);
 
+        for (Obstacle o : obstacles) {
+            sb.draw(o.getTexture(), o.getPosition().x, o.getPosition().y);
+
+            glyphLayout.setText(bitmapFont, "" + o.getSize());
+            bitmapFont.getData().scale(zoom / 10000);
+            bitmapFont.draw(sb, glyphLayout,
+                    o.getPosition().x + o.getTexture().getRegionWidth() / 2 - glyphLayout.width / 2,
+                    o.getPosition().y - 10);
+        }
+
         glyphLayout.setText(bitmapFont, "" + score);
-        bitmapFont.getData().scale(zoom / 2000);
+        bitmapFont.getData().scale(zoom / 10000);
         bitmapFont.draw(sb, glyphLayout, cam.position.x - glyphLayout.width / 2, cam.position.y + (cam.viewportHeight / 4));
 
         glyphLayout.setText(bitmapFont, "" + snowball.getSnowCount());
-        bitmapFont.getData().scale(zoom / 2000);
+        bitmapFont.getData().scale(zoom / 10000);
         bitmapFont.draw(sb, glyphLayout,
                 snowball.getPosition().x + snowball.getBounds().width / 2 - glyphLayout.width / 2,
                 snowball.getPosition().y + snowball.getBounds().height + glyphLayout.height + 10);
