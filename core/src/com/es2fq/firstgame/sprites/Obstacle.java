@@ -4,7 +4,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.es2fq.firstgame.*;
+
+import java.util.Random;
 
 /**
  * Created by es2fq on 1/4/2017.
@@ -13,46 +16,77 @@ import com.es2fq.firstgame.*;
 public class Obstacle {
     private Vector3 position;
 
-    private Texture texture;
+    private Array<Texture> textures;
+    private Texture currentTexture;
+
+    private Array<Animation> destroyAnimations;
     private Animation textureAnimation;
+
+    private int[] obstacleSizes;
 
     private Rectangle bounds;
 
+    private int obstacleNumber;
     private boolean passed;
     private boolean destroyed;
-    private int size;
 
     public Obstacle(float x, float y) {
-        texture = new Texture("fence.png");
-        textureAnimation = new Animation(new TextureRegion(texture), 1, 1f);
+        textures = new Array<Texture>();
+        textures.add(new Texture("snow.png"));
+        textures.add(new Texture("fence.png"));
+        textures.add(new Texture("building.png"));
+
+        destroyAnimations = new Array<Animation>();
+        destroyAnimations.add(new Animation(new TextureRegion(new Texture("snowdestroy.png")), 4, 0.5f));
+        destroyAnimations.add(new Animation(new TextureRegion(new Texture("fencedestroy.png")), 4, 0.5f));
+        destroyAnimations.add(new Animation(new TextureRegion(new Texture("buildingdestroy.png")), 4, 0.5f));
+
+        obstacleSizes = new int[textures.size];
+        obstacleSizes[0] = 0;
+        obstacleSizes[1] = 20;
+        obstacleSizes[2] = 50;
+
+        obstacleNumber = 1;
+
+        currentTexture = textures.get(obstacleNumber);
+        textureAnimation = new Animation(new TextureRegion(currentTexture), 1, 1f);
 
         position = new Vector3(x, y, 0);
-        bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
+        bounds = new Rectangle(x, y, currentTexture.getWidth(), currentTexture.getHeight());
 
         passed = false;
         destroyed = false;
-        size = 2;
     }
 
     public void update(float dt) {
-        if (textureAnimation != null) {
-            textureAnimation.update(dt);
-        }
+        textureAnimation.update(dt);
     }
 
     public void reposition(float x, int snowCount) {
-        if (snowCount > 1) {
-            texture = new Texture("building.png");
-            textureAnimation = new Animation(new TextureRegion(texture), 1, 1f);
-            bounds.setWidth(texture.getWidth());
-            bounds.setHeight(texture.getHeight());
+        changeObstacle(snowCount);
+        textureAnimation.setFrame(0);
 
-            destroyed = false;
-            size = 4;
-        }
+        destroyed = false;
+
+        currentTexture = textures.get(obstacleNumber);
+        textureAnimation = new Animation(new TextureRegion(currentTexture), 1, 1f);
+
+        bounds.setWidth(currentTexture.getWidth());
+        bounds.setHeight(currentTexture.getHeight());
 
         position.set(x, position.y, 0);
         bounds.setPosition(position.x, position.y);
+    }
+
+    private void changeObstacle(int snowCount) {
+        int numObstaclesAvailable = obstacleSizes.length;
+
+        if (snowCount < 20)
+            numObstaclesAvailable = 2;
+        if (snowCount < 50)
+            numObstaclesAvailable = 3;
+
+        obstacleNumber = new Random().nextInt(numObstaclesAvailable);
     }
 
     public void destroy() {
@@ -61,14 +95,8 @@ public class Obstacle {
 
         destroyed = true;
 
-        if (size == 2) {
-            texture = new Texture("fencedestroy.png");
-            textureAnimation = new Animation(new TextureRegion(texture), 4, 0.1f);
-        }
-        if (size == 4) {
-            texture = new Texture("buildingdestroy.png");
-            textureAnimation = new Animation(new TextureRegion(texture), 4, 0.1f);
-        }
+        textureAnimation = destroyAnimations.get(obstacleNumber);
+
         textureAnimation.setMaxCycles(1);
     }
 
@@ -80,6 +108,10 @@ public class Obstacle {
         return textureAnimation.getFrame();
     }
 
+    public int getObstacleNumber() {
+        return obstacleNumber;
+    }
+
     public boolean isPassed() {
         return passed;
     }
@@ -89,7 +121,7 @@ public class Obstacle {
     }
 
     public int getSize() {
-        return size;
+        return obstacleSizes[obstacleNumber];
     }
 
     public Vector3 getPosition() {

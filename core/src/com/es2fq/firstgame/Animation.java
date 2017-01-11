@@ -56,4 +56,8 @@ public class Animation {
     public void setMaxCycles(int num) {
         maxCycles = num;
     }
+
+    public void setFrame(int frameNumber) {
+        frame = frameNumber;
+    }
 }

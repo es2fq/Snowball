@@ -44,10 +44,13 @@ public class Snowball {
         texture = new Texture("rolling.png");
         textureAnimation = new Animation(new TextureRegion(texture), numFrames, 0.5f);
 
-        sizeX = texture.getWidth() / numFrames / 2;
-        sizeY = texture.getHeight() / 2;
+//        sizeX = texture.getWidth() / numFrames / 2;
+//        sizeY = texture.getHeight() / 2;
 
-        scale = 0.05f;
+        sizeX = 10;
+        sizeY = 10;
+
+        scale = 0.1f;
 
         bounds = new Rectangle(x, y, sizeX, sizeY);
     }
@@ -71,8 +74,12 @@ public class Snowball {
 
         bounds.set(position.x, position.y, sizeX, sizeY);
 
-        sizeX += scale;
-        sizeY += scale;
+        if (sizeX < snowCount) {
+            sizeX += scale;
+        }
+        if (sizeY < snowCount) {
+            sizeY += scale;
+        }
 
         extraSpeed += 0.2;
     }

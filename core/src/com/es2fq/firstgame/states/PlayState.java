@@ -82,7 +82,7 @@ public class PlayState extends State {
         for (Obstacle o : obstacles) {
             o.update(dt);
             if (o.collides(snowball.getBounds())) {
-                if (snowball.getSnowCount() > o.getSize()) {
+                if (snowball.getSnowCount() >= o.getSize()) {
                     o.destroy();
                 } else {
                     gsm.set(new PlayState(gsm));
