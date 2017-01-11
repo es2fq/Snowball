@@ -32,6 +32,7 @@ public class PlayState extends State {
 
     private float zoom;
     private int score;
+    private int count;
 
     BitmapFont bitmapFont;
     GlyphLayout glyphLayout;
@@ -42,6 +43,7 @@ public class PlayState extends State {
 
         zoom = 1.0f;
         score = 0;
+        count = 0;
 
         bitmapFont = new BitmapFont();
         glyphLayout = new GlyphLayout();
@@ -103,6 +105,12 @@ public class PlayState extends State {
         zoom += 0.001f;
 
         cam.update();
+
+        if (count > 15) {
+            snowball.increaseSnowCount(1);
+            count = 0;
+        }
+        count++;
     }
 
     @Override

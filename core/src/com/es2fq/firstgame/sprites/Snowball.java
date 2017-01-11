@@ -110,6 +110,10 @@ public class Snowball {
         return landed;
     }
 
+    public void increaseSnowCount(int x) {
+        snowCount += x;
+    }
+
     public int getSnowCount() {
         return snowCount;
     }
