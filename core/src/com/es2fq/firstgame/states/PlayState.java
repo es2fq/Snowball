@@ -155,11 +155,14 @@ public class PlayState extends State {
             groundPositions.set(i, coord);
         }
     }
-
+    
     private void updateObstacles(float dt) {
         for (Obstacle o : obstacles) {
             o.update(dt);
             if (o.collides(snowball.getBounds())) {
+                if (o.getObstacleNumber() == 0) {
+                    snowball.increaseSnowCount(1);
+                }
                 if (snowball.getSnowCount() >= o.getSize()) {
                     o.destroy();
                 } else {
