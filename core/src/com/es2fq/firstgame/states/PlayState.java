@@ -92,9 +92,10 @@ public class PlayState extends State {
 
         cam.update();
 
-        if (count > 15) {
+        if (count % 15 == 0) {
             snowball.increaseSnowCount(1);
-            count = 0;
+        }
+        if (count % 50 == 0 && snowball.getSnowCount() > 50) {
             addPlane();
         }
         count++;
@@ -188,11 +189,11 @@ public class PlayState extends State {
     }
 
     private void addPlane() {
-        int rand = new Random().nextInt(100);
+        float rand = new Random().nextInt((int) cam.viewportHeight / 2);
 
         float x = cam.position.x - cam.viewportWidth / 2 - 100;
-        float y = GROUND_OFFSET + ground.getHeight() + snowball.getTexture().getRegionHeight() + 50 + rand * 2;
-        float velX = snowball.getVelocity().x + 300 + rand;
+        float y = cam.position.y + rand;
+        float velX = snowball.getExtraSpeed() * 3;
 
         Plane plane = new Plane(x, y, velX);
         planes.add(plane);

@@ -11,8 +11,8 @@ import com.es2fq.firstgame.*;
  */
 
 public class Snowball {
-    private static final int GRAVITY = -15;
     private static final float MOVEMENT = 100;
+    private static final int GRAVITY = -15;
     private static final float JUMP = 350;
 
     private Vector3 position;
@@ -111,6 +111,10 @@ public class Snowball {
 
     public void setVelocity(float x, float y, float z) {
         velocity = new Vector3(x, y, z);
+    }
+
+    public float getExtraSpeed() {
+        return extraSpeed;
     }
 
     public boolean isLanded() {
