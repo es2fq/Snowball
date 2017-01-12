@@ -37,9 +37,9 @@ public class Obstacle {
         textures.add(new Texture("building.png"));
 
         destroyAnimations = new Array<Animation>();
-        destroyAnimations.add(new Animation(new TextureRegion(new Texture("snowdestroy.png")), 4, 0.5f));
-        destroyAnimations.add(new Animation(new TextureRegion(new Texture("fencedestroy.png")), 4, 0.5f));
-        destroyAnimations.add(new Animation(new TextureRegion(new Texture("buildingdestroy.png")), 4, 0.5f));
+        destroyAnimations.add(new Animation(new TextureRegion(new Texture("snowdestroy.png")), 4, 0.2f));
+        destroyAnimations.add(new Animation(new TextureRegion(new Texture("fencedestroy.png")), 4, 0.2f));
+        destroyAnimations.add(new Animation(new TextureRegion(new Texture("buildingdestroy.png")), 4, 0.2f));
 
         obstacleSizes = new int[textures.size];
         obstacleSizes[0] = 0;

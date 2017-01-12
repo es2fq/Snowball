@@ -12,6 +12,8 @@ import com.badlogic.gdx.utils.Array;
 import com.es2fq.firstgame.GameClass;
 import com.es2fq.firstgame.sprites.*;
 
+import java.util.Random;
+
 /**
  * Created by es2fq on 12/31/2016.
  */
@@ -23,19 +25,20 @@ public class PlayState extends State {
     private static final int OBSTACLE_GAP = 200;
 
     private Snowball snowball;
+
     private Array<Obstacle> obstacles;
+    private Array<Vector2> groundPositions;
+    private Array<Plane> planes;
 
     private Texture bg;
     private Texture ground;
-
-    private Array<Vector2> groundPositions;
 
     private float zoom;
     private int score;
     private int count;
 
-    BitmapFont bitmapFont;
-    GlyphLayout glyphLayout;
+    private BitmapFont bitmapFont;
+    private GlyphLayout glyphLayout;
 
     public PlayState(GameStateManager gsm) {
         super(gsm);
@@ -51,19 +54,20 @@ public class PlayState extends State {
         bg = new Texture("bg.png");
         ground = new Texture("ground.png");
 
-        groundPositions = new Array<Vector2>();
-        for (int i = 0; i < NUM_GROUND; i++) {
-            groundPositions.add(new Vector2((cam.position.x - cam.viewportWidth / 2) + ground.getWidth() * i, GROUND_OFFSET));
-        }
-
         int groundHeight = GROUND_OFFSET + ground.getHeight();
-
         snowball = new Snowball(50, groundHeight);
 
         obstacles = new Array<Obstacle>();
         for (int i = 1; i <= NUM_OBSTACLES; i++) {
             obstacles.add(new Obstacle(i * OBSTACLE_GAP + 100, groundHeight));
         }
+
+        groundPositions = new Array<Vector2>();
+        for (int i = 0; i < NUM_GROUND; i++) {
+            groundPositions.add(new Vector2((cam.position.x - cam.viewportWidth / 2) + ground.getWidth() * i, GROUND_OFFSET));
+        }
+
+        planes = new Array<Plane>();
     }
 
     @Override
@@ -77,27 +81,9 @@ public class PlayState extends State {
     public void update(float dt) {
         handleInput();
         updateGround();
+        updateObstacles(dt);
+        updatePlanes(dt);
         snowball.update(dt);
-
-        for (Obstacle o : obstacles) {
-            o.update(dt);
-            if (o.collides(snowball.getBounds())) {
-                if (snowball.getSnowCount() >= o.getSize()) {
-                    o.destroy();
-                } else {
-                    gsm.set(new PlayState(gsm));
-                    return;
-                }
-            }
-            if (snowball.getPosition().x > o.getPosition().x + o.getTexture().getRegionWidth() && !o.isPassed()) {
-                score++;
-                o.setPassed(true);
-            }
-            if (cam.position.x - (cam.viewportWidth / 2) > o.getPosition().x + o.getTexture().getRegionWidth()) {
-                o.reposition(o.getPosition().x + (NUM_OBSTACLES * OBSTACLE_GAP), snowball.getSnowCount());
-                o.setPassed(false);
-            }
-        }
 
         cam.setToOrtho(false, GameClass.WIDTH / 2 * zoom, GameClass.HEIGHT / 2 * zoom);
         cam.position.x = snowball.getPosition().x + cam.viewportWidth * 0.4f;
@@ -109,6 +95,7 @@ public class PlayState extends State {
         if (count > 15) {
             snowball.increaseSnowCount(1);
             count = 0;
+            addPlane();
         }
         count++;
     }
@@ -132,6 +119,10 @@ public class PlayState extends State {
             bitmapFont.draw(sb, glyphLayout,
                     o.getPosition().x + o.getTexture().getRegionWidth() / 2 - glyphLayout.width / 2,
                     o.getPosition().y - 10);
+        }
+
+        for (Plane plane : planes) {
+            sb.draw(plane.getTexture(), plane.getPosition().x, plane.getPosition().y);
         }
 
         glyphLayout.setText(bitmapFont, "" + score);
@@ -162,5 +153,48 @@ public class PlayState extends State {
             }
             groundPositions.set(i, coord);
         }
+    }
+
+    private void updateObstacles(float dt) {
+        for (Obstacle o : obstacles) {
+            o.update(dt);
+            if (o.collides(snowball.getBounds())) {
+                if (snowball.getSnowCount() >= o.getSize()) {
+                    o.destroy();
+                } else {
+                    gsm.set(new PlayState(gsm));
+                    return;
+                }
+            }
+            if (snowball.getPosition().x > o.getPosition().x + o.getTexture().getRegionWidth() && !o.isPassed()) {
+                score++;
+                o.setPassed(true);
+            }
+            if (cam.position.x - (cam.viewportWidth / 2) > o.getPosition().x + o.getTexture().getRegionWidth()) {
+                o.reposition(o.getPosition().x + (NUM_OBSTACLES * OBSTACLE_GAP), snowball.getSnowCount());
+                o.setPassed(false);
+            }
+        }
+    }
+
+    private void updatePlanes(float dt) {
+        for (Plane plane : planes) {
+            plane.update(dt);
+
+            if (plane.getPosition().x > cam.position.x + cam.viewportWidth / 2) {
+                planes.removeValue(plane, true);
+            }
+        }
+    }
+
+    private void addPlane() {
+        int rand = new Random().nextInt(100);
+
+        float x = cam.position.x - cam.viewportWidth / 2 - 100;
+        float y = GROUND_OFFSET + ground.getHeight() + snowball.getTexture().getRegionHeight() + 50 + rand * 2;
+        float velX = snowball.getVelocity().x + 300 + rand;
+
+        Plane plane = new Plane(x, y, velX);
+        planes.add(plane);
     }
 }
