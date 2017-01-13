@@ -127,7 +127,7 @@ public class PlayState extends State {
         }
 
         for (Plane plane : planes) {
-            sb.draw(plane.getTexture(), plane.getPosition().x, plane.getPosition().y);
+            sb.draw(plane.getTexture(), plane.getPosition().x, plane.getPosition().y, snowball.getSizeX(), snowball.getSizeY() / 2);
         }
 
         glyphLayout.setText(bitmapFont, "" + score);
