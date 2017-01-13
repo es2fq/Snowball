@@ -115,7 +115,11 @@ public class PlayState extends State {
         for (Obstacle o : obstacles) {
             sb.draw(o.getTexture(), o.getPosition().x, o.getPosition().y);
 
-            glyphLayout.setText(bitmapFont, "" + o.getSize());
+            String sizeOfObstacle = Integer.toString(o.getSize());
+            if (o.getSize() == 0)
+                sizeOfObstacle = "";
+
+            glyphLayout.setText(bitmapFont, sizeOfObstacle);
             bitmapFont.getData().scale(zoom / 10000);
             bitmapFont.draw(sb, glyphLayout,
                     o.getPosition().x + o.getTexture().getRegionWidth() / 2 - glyphLayout.width / 2,

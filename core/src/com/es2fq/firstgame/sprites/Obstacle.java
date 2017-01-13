@@ -42,7 +42,7 @@ public class Obstacle {
         destroyAnimations.add(new Animation(new TextureRegion(new Texture("buildingdestroy.png")), 4, 0.2f));
 
         obstacleSizes = new int[textures.size];
-        obstacleSizes[0] = 3;
+        obstacleSizes[0] = 0;
         obstacleSizes[1] = 20;
         obstacleSizes[2] = 50;
 
