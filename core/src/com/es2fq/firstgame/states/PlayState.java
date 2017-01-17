@@ -29,6 +29,7 @@ public class PlayState extends State {
     private Array<Obstacle> obstacles;
     private Array<Vector2> groundPositions;
     private Array<Plane> planes;
+    private Array<Bomb> bombs;
 
     private Texture bg;
     private Texture ground;
@@ -68,6 +69,7 @@ public class PlayState extends State {
         }
 
         planes = new Array<Plane>();
+        bombs = new Array<Bomb>();
     }
 
     @Override
@@ -83,6 +85,7 @@ public class PlayState extends State {
         updateGround();
         updateObstacles(dt);
         updatePlanes(dt);
+        updateBombs(dt);
         snowball.update(dt);
 
         cam.setToOrtho(false, GameClass.WIDTH / 2 * zoom, GameClass.HEIGHT / 2 * zoom);
@@ -128,6 +131,10 @@ public class PlayState extends State {
 
         for (Plane plane : planes) {
             sb.draw(plane.getTexture(), plane.getPosition().x, plane.getPosition().y, snowball.getSizeX(), snowball.getSizeY() / 2);
+        }
+
+        for (Bomb bomb : bombs) {
+            sb.draw(bomb.getTexture(), bomb.getPosition().x, bomb.getPosition().y, snowball.getSizeX(), snowball.getSizeY());
         }
 
         glyphLayout.setText(bitmapFont, "" + score);
@@ -192,6 +199,11 @@ public class PlayState extends State {
             if (plane.getPosition().x > cam.position.x + cam.viewportWidth / 2) {
                 planes.removeValue(plane, true);
             }
+
+            if (Math.abs(plane.getPosition().x - cam.position.x) < 10 && !plane.hasBombed()) {
+                bombs.add(new Bomb(plane.getPosition().x, plane.getPosition().y));
+                plane.setBombed(true);
+            }
         }
     }
 
@@ -204,5 +216,17 @@ public class PlayState extends State {
 
         Plane plane = new Plane(x, y, velX);
         planes.add(plane);
+    }
+
+    private void updateBombs(float dt) {
+        for (Bomb bomb : bombs) {
+            bomb.update(dt);
+
+            bomb.setPosition(cam.position.x, bomb.getPosition().y, 0);
+
+            if (bomb.getPosition().y < GROUND_OFFSET + ground.getHeight()) {
+                bombs.removeValue(bomb, true);
+            }
+        }
     }
 }

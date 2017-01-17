@@ -16,12 +16,16 @@ public class Plane {
     private Texture texture;
     private Animation textureAnimation;
 
+    private boolean bombed;
+
     public Plane(float x, float y, float velX) {
         texture = new Texture("plane.png");
         textureAnimation = new Animation(new TextureRegion(texture), 4, 0.5f);
 
         position = new Vector3(x, y, 0);
         velocity = new Vector3(velX, 0, 0);
+
+        bombed = false;
     }
 
     public void update(float dt) {
@@ -44,5 +48,13 @@ public class Plane {
 
     public Vector3 getVelocity() {
         return velocity;
+    }
+
+    public boolean hasBombed() {
+        return bombed;
+    }
+
+    public void setBombed(boolean bool) {
+        bombed = bool;
     }
 }
